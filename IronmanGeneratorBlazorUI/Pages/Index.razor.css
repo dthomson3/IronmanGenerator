@@ -1,0 +1,48 @@
+﻿.character img {
+    display:block;
+    margin:auto;
+    padding:10px;
+    width:100px;
+    height:100px;
+}
+
+.character h3{
+    font-size:20px;
+}
+
+.character-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    padding: 10px;
+    background-color:black;
+}
+
+.character-grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    width: auto;
+    height: auto;
+}
+
+.layout-grid-container{
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+}
+
+.layout-left{
+    grid-column: 1;
+}
+
+.layout-right{
+    grid-column: 3;
+}
+
+.options{
+    font-size:20px;
+    grid-column: 2;
+
+}
+
+body {
+    font-family: 'Times New Roman', Times, serif
+}
