@@ -10,4 +10,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IronmanGeneratorLibrary\IronmanGeneratorLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

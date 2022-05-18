@@ -26,7 +26,7 @@
 
 .layout-grid-container{
     display: grid;
-    grid-template-columns: 1fr 100px 1fr;
+    grid-template-columns: 1fr 200px 1fr;
 }
 
 .layout-left{
@@ -40,8 +40,25 @@
 .options{
     font-size:20px;
     grid-column: 2;
-
+    text-align:center;
 }
+
+.options-input {
+    text-align:center;
+    width: 20%;
+    background-color: pink;
+}
+
+.options-input::-webkit-outer-spin-button,
+.options-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.options-input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
 
 body {
     font-family: 'Times New Roman', Times, serif

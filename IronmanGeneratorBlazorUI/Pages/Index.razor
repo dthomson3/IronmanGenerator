@@ -1,44 +1,48 @@
 ﻿@page "/"
 
+@using IronmanGeneratorLibrary.Core;
+
 <link rel="stylesheet" href="~/css/index.css"/>
+<style>
+</style>
+
 <body>
 
 <PageTitle>Index</PageTitle>
+
+@if (CharGenModalOpen)
+	{
+		<ModalDialog Title="@modalTitle" TeamGenerator="@teamGenerator" Characters="@listToAddTo" generatedCharacter="@generatedCharacter" OnClose="@OnCharacterGenerateClose"></ModalDialog>
+	}
 
 <h1>Hello, world!</h1>
 
 <div class="layout-grid-container character" >
 	<!-- left player box -->
 	<div class="character-grid-container layout-left">
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>@characterName</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-
+		@foreach (Character character in teamOneCharacters)
+			{
+				<div class="character-grid-item">
+					<img src="images/terry.png" alt="Terry"/><br>
+					<h3>@character.CharacterName</h3>
+				</div>
+			}
 	</div>
 
 	<!-- Center options box -->
 	<div class="options">
-		<EditForm Model="@demo" OnValidSubmit="@HandleValidSubmit">
+		<EditForm Model="@settings" OnValidSubmit="@HandleValidSubmit">
 			<label>
-				Test
-				<InputNumber id="vetoNumber" @bind-Value="demo.DemoInt"/>
+				Number of Characters<br />
+				<input type="number" min="1" max="87" class="options-input" id="CharactersNumber" @bind="settings.NumberOfCharacters"/>
+			</label>
+			<label>
+				Number of ReRolls<br />
+				<input type="number" min="0" max="87" class="options-input" id="ReRollsNumber" @bind="settings.NumberOfReRolls"/>
+			</label>
+			<label>
+				Number of Vetoes<br />
+				<input type="number" min="0" max="87" class="options-input" id="vetoNumber" @bind="settings.NumberOfVetoes"/>
 			</label>
 
 			<button type="submit">Generate Teams</button>
@@ -48,30 +52,13 @@
 
 	<!-- right player box -->
 	<div class="character-grid-container layout-right">
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>@characterName</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
-		<div class="character-grid-item">
-			<img src="images/terry.png" alt="Terry Bogard" /><br />
-			<h3>Samus</h3>
-		</div>
+		@foreach (Character character in teamTwoCharacters)
+			{
+				<div class="character-grid-item">
+					<img src="images/terry.png" alt="Terry"/><br>
+					<h3>@character.CharacterName</h3>
+				</div>
+			}
 	</div>
 </div>
 
@@ -81,26 +68,93 @@
 Welcome to your new app.
 
 </body>
+
 @code{
-	string characterName = "Mr. Game and Watch";
-	string[] characterNames = { "Mr Game and Watch", "Fox", "Marth", "Falco", "Palutena" };
+	public bool CharGenModalOpen { get; set; }
 
-	DemoClass demo = new();
+	public List<Character> teamOneCharacters = new();
+	public List<Character> teamTwoCharacters = new();
 
-	Random rand = new Random();
+	public List<Character> listToAddTo;
+
+	string modalTitle = "Player 1 Team";
+
+	private bool _generatingTeamOne;
+	public bool GeneratingTeamOne
+	{
+		get { return _generatingTeamOne; }
+		set
+		{
+			if (value == true)
+			{
+				modalTitle = "Player 1 Team";
+			}
+			else if (value == false)
+			{
+				modalTitle = "Player 2 Team";
+			}
+			_generatingTeamOne = value;
+		}
+	}
+
+	GenerationSettings settings = new();
+	TeamGeneration teamGenerator = new();
+	Character generatedCharacter = new();
+
+	private async Task OnCharacterGenerateClose(bool accepted)
+	{
+		Console.WriteLine(teamGenerator.poolOfCharacters.Count);
+		CharGenModalOpen = false;
+		StateHasChanged();
+		if (GeneratingTeamOne)
+		{
+			if (teamOneCharacters.Count >= settings.NumberOfCharacters)
+			{
+				MoveToSecondPlayerList();
+			}
+			OpenCharGenModal();
+		}
+		else
+		{
+			if (teamTwoCharacters.Count < settings.NumberOfCharacters)
+			{
+				OpenCharGenModal();
+			}
+		}
+	}
+
+	private void OpenCharGenModal()
+	{
+		CharGenModalOpen = true;
+		SelectRandomCharacter();
+		StateHasChanged();
+	}
 
 	private void SelectRandomCharacter()
 	{
-		characterName = characterNames[rand.Next(0, 5)];
+		generatedCharacter.CharacterName = teamGenerator.GetCharacterFromPool();
 	}
+
+	private void GenerateTeams()
+	{
+		teamGenerator.FillPool(true);
+		teamGenerator.GenerateTeams(settings.NumberOfCharacters);
+		GeneratingTeamOne = true;
+		listToAddTo = teamOneCharacters;
+		OpenCharGenModal();
+	}
+
+	public void MoveToSecondPlayerList()
+	{
+		GeneratingTeamOne = false;
+		listToAddTo = teamTwoCharacters;
+		teamGenerator.FillPool(true);
+	}
+
 	private void HandleValidSubmit()
 	{
 		Console.WriteLine("Valid submit");
-	}
-
-
-	class DemoClass
-	{
-		public int DemoInt { get; set; }
+		Console.WriteLine("{0}, {1}, {2}", settings.NumberOfCharacters, settings.NumberOfReRolls, settings.NumberOfVetoes);
+		GenerateTeams();
 	}
 }
