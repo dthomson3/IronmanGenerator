@@ -37,6 +37,10 @@
     grid-column: 3;
 }
 
+.layout-bottom{
+    grid-row: 9999;
+}
+
 .options{
     font-size:20px;
     grid-column: 2;

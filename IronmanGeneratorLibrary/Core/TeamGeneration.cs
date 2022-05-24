@@ -11,14 +11,27 @@ public class TeamGeneration
     public List<Character> poolOfCharacters = new();
     public Random rand = new();
     public Character generatedCharacter = new();
-	public void AcceptCharacter()
+    public int Vetoes = 0;
+    public int ReRolls = 0;
+    public int charsLeftToGenerate = 0;
+
+	public string VetoCharacter()
     {
+        if (Vetoes <= 0)
+        {
+            return "No Vetoes";
+        }
+        if (charsLeftToGenerate == poolOfCharacters.Count)
+        {
+            return "Not Enough Characters";
+        }
+        else
+        {
+            Vetoes--;
 
-    }
-
-	public void VetoCharacter()
-    {
-
+            RemoveCharacterFromPool(generatedCharacter);
+            return "success";
+        }
     }
 
 	public void ReRollCharacter()

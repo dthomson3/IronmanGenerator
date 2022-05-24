@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using IronmanGeneratorLibrary.Core;
+@inject IJSRuntime JsRuntime
 
 <link rel="stylesheet" href="~/css/index.css"/>
 <style>
@@ -28,11 +29,10 @@
 				</div>
 			}
 	</div>
-	<button type="button" onclick="@TeamOneButtonOnClick">Generate Team One</button>
 
 	<!-- Center options box -->
 	<div class="options">
-		<EditForm Model="@settings" OnValidSubmit="@HandleValidSettingsSubmit">
+		<EditForm Model="@settings">
 			<label>
 				Number of Characters<br />
 				<input type="number" min="1" max="87" class="options-input" id="CharactersNumber" @bind="settings.NumberOfCharacters"/>
@@ -45,8 +45,6 @@
 				Number of Vetoes<br />
 				<input type="number" min="0" max="87" class="options-input" id="vetoNumber" @bind="settings.NumberOfVetoes"/>
 			</label>
-
-			<button type="submit">Generate Teams</button>
 		</EditForm>
 
 	</div>
@@ -62,8 +60,12 @@
 			}
 	</div>
 
-	<button type="button" onclick="@TeamTwoButtonOnClick">Generate Team Two</button>
+	<!-- generation buttons -->
+	<button class="layout-bottom layout-left" type="button" onclick="@TeamOneButtonOnClick">Generate Team One</button>
+
+	<button class="layout-bottom layout-right" type="button" onclick="@TeamTwoButtonOnClick">Generate Team Two</button>
 </div>
+
 
 Welcome to your new app.
 
@@ -83,14 +85,14 @@ Welcome to your new app.
 	TeamGeneration teamGenerator = new();
 	Character generatedCharacter = new();
 
-	private void HandleValidSettingsSubmit()
-	{
-		Console.WriteLine("Valid submit");
-		Console.WriteLine("{0}, {1}, {2}", settings.NumberOfCharacters, settings.NumberOfReRolls, settings.NumberOfVetoes);
-	}
 
-	private void TeamOneButtonOnClick()
+	private async void TeamOneButtonOnClick()
 	{
+		if(settings.NumberOfCharacters <= 0)
+		{
+			await JsRuntime.InvokeVoidAsync("alert", "Number of characters must not be 0, please enter a number.");
+			return;
+		}
 		teamToGenerate = teamOneCharacters;
 		GenerateTeam();
 	}
@@ -105,6 +107,8 @@ Welcome to your new app.
 	{
 		teamGenerator.FillPool(true);
 		teamGenerator.GenerateTeam(settings.NumberOfCharacters);
+		teamGenerator.Vetoes = settings.NumberOfVetoes;
+		teamGenerator.ReRolls = settings.NumberOfReRolls;
 		OpenCharGenModal();
 	}
 
@@ -119,7 +123,7 @@ Welcome to your new app.
 	{
 		CharGenModalOpen = false;
 		StateHasChanged();
-		if (teamToGenerate.Count < settings.NumberOfCharacters)
+		if (teamToGenerate.Count < settings.NumberOfCharacters && accepted == true)
 		{
 			OpenCharGenModal();
 		}
