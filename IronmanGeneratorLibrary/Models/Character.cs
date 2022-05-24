@@ -8,4 +8,5 @@ namespace IronmanGeneratorLibrary.Models;
 public class Character
 {
 	public string CharacterName { get; set; } = "";
+	public string ImageFileName { get; set; } = "";
 }

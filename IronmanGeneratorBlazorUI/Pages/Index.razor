@@ -3,20 +3,13 @@
 @using IronmanGeneratorLibrary.Core;
 @inject IJSRuntime JsRuntime
 
-<link rel="stylesheet" href="~/css/index.css"/>
-<style>
-</style>
-
 <body>
-
-<PageTitle>Index</PageTitle>
-
 @if (CharGenModalOpen)
-	{
-		<ModalDialog Title="@modalTitle" TeamGenerator="@teamGenerator" Team="@teamToGenerate" OnClose="@OnCharacterGenerateClose"></ModalDialog>
-	}
+{
+	<ModalDialog TeamGenerator="@teamGenerator" Team="@teamToGenerate" OnClose="@OnCharacterGenerateClose"></ModalDialog>
+}
 
-<h1>Hello, world!</h1>
+<h1>Ironman Team Generator</h1>
 
 <div class="layout-grid-container character" >
 	<!-- left player box -->
@@ -24,7 +17,7 @@
 		@foreach (Character character in teamOneCharacters)
 			{
 				<div class="character-grid-item">
-					<img src="images/terry.png" alt="Terry"/><br>
+					<img src="@character.ImageFileName" alt="@character.CharacterName"/><br>
 					<h3>@character.CharacterName</h3>
 				</div>
 			}
@@ -54,7 +47,7 @@
 		@foreach (Character character in teamTwoCharacters)
 			{
 				<div class="character-grid-item">
-					<img src="images/terry.png" alt="Terry"/><br>
+					<img src="@character.ImageFileName" alt="@character.CharacterName"/><br>
 					<h3>@character.CharacterName</h3>
 				</div>
 			}
@@ -66,8 +59,9 @@
 	<button class="layout-bottom layout-right" type="button" onclick="@TeamTwoButtonOnClick">Generate Team Two</button>
 </div>
 
-
-Welcome to your new app.
+<div class="page-layout-footer">
+	temp
+</div>
 
 </body>
 
@@ -85,27 +79,48 @@ Welcome to your new app.
 	TeamGeneration teamGenerator = new();
 	Character generatedCharacter = new();
 
+	int MaxCharactersToGenerate = 86;
 
 	private async void TeamOneButtonOnClick()
 	{
-		if(settings.NumberOfCharacters <= 0)
+		if  (await CheckForValidSettings() == false)
 		{
-			await JsRuntime.InvokeVoidAsync("alert", "Number of characters must not be 0, please enter a number.");
 			return;
 		}
+		teamOneCharacters.Clear();
 		teamToGenerate = teamOneCharacters;
 		GenerateTeam();
 	}
 
-	private void TeamTwoButtonOnClick()
+	private async void TeamTwoButtonOnClick()
 	{
+		if  (await CheckForValidSettings() == false)
+		{
+			return;
+		}
 		teamToGenerate = teamTwoCharacters;
+		teamTwoCharacters.Clear();
 		GenerateTeam();
+	}
+
+	public async Task<bool> CheckForValidSettings()
+	{
+		if(settings.NumberOfCharacters <= 0)
+		{
+			await JsRuntime.InvokeVoidAsync("alert", "Number of characters must not be 0, please enter a number.");
+			return false;
+		}
+		if(settings.NumberOfCharacters > MaxCharactersToGenerate)
+		{
+			await JsRuntime.InvokeVoidAsync("alert", string.Format("Too many characters, must be {0} or less", MaxCharactersToGenerate));
+			return false;
+		}
+		return true;
 	}
 
 	private void GenerateTeam()
 	{
-		teamGenerator.FillPool(true);
+		teamGenerator.FillPool();
 		teamGenerator.GenerateTeam(settings.NumberOfCharacters);
 		teamGenerator.Vetoes = settings.NumberOfVetoes;
 		teamGenerator.ReRolls = settings.NumberOfReRolls;

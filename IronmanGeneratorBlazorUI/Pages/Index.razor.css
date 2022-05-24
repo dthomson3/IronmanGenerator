@@ -21,7 +21,7 @@
     background-color: rgba(255, 255, 255, 0.8);
     text-align: center;
     width: auto;
-    height: auto;
+    height: 180px;
 }
 
 .layout-grid-container{
@@ -50,7 +50,7 @@
 .options-input {
     text-align:center;
     width: 20%;
-    background-color: pink;
+    background-color: greenyellow;
 }
 
 .options-input::-webkit-outer-spin-button,
@@ -66,4 +66,25 @@
 
 body {
     font-family: 'Times New Roman', Times, serif
+}
+
+.page-layout-container {
+    display:grid;
+}
+
+.page-layout-header{
+
+}
+
+.page-layout-content{
+
+}
+
+.page-layout-footer{
+    position: fixed;
+    left:0;
+    bottom:0;
+    width:100%;
+    background-color: grey;
+    text-align:center;
 }

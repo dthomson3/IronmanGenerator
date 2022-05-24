@@ -5,20 +5,21 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@Title</h4>
+                <h4 class="modal-title">Generated Character</h4>
                 <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
             </div>
             <div class="modal-body">
+                <h3>@TeamGenerator.generatedCharacter.CharacterName</h3>
+                <img src="@TeamGenerator.generatedCharacter.ImageFileName" width="150" height="150" alt="terry"/>
+                <h4>Characters left to generate: @TeamGenerator.charsLeftToGenerate</h4>
+                <h4>Characters left in roster: @TeamGenerator.poolOfCharacters.Count</h4>
                 <h4>Vetoes Remaining: @TeamGenerator.Vetoes</h4>
                 <h4>ReRolls Remaining: @TeamGenerator.ReRolls</h4>
-                <h4>Characters left in roster: @TeamGenerator.poolOfCharacters.Count</h4>
-                <p>@TeamGenerator.generatedCharacter.CharacterName</p>
-                <img src="images/terry.png" alt="terry"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick="@ModalAcceptCharacter">OK</button>
                 <button type="button" class="btn btn-primary" @onclick="@ModalVetoCharacter">Veto</button>
-                <button type="button" class="btn btn-primary">ReRoll</button>
+                <button type="button" class="btn btn-primary" @onclick="@ModalReRollCharacter">ReRoll</button>
 
             </div>
         </div>
@@ -26,8 +27,6 @@
 </div>
 
 @code {
-    [Parameter]
-    public string Title { get; set; }
 
     [Parameter]
     public List<Character> Team { get; set; }
@@ -54,6 +53,7 @@
     {
         Console.WriteLine("Accepted");
         Team.Add(TeamGenerator.generatedCharacter);
+        TeamGenerator.charsLeftToGenerate--;
         TeamGenerator.RemoveCharacterFromPool(TeamGenerator.generatedCharacter);
         return OnClose.InvokeAsync(true);
     }
@@ -68,7 +68,7 @@
                 await OnClose.InvokeAsync(true);
                 return;
             case "No Vetoes":
-                await JsRuntime.InvokeVoidAsync("alert", "No Vetoes remaining, you must accept the character");
+                await JsRuntime.InvokeVoidAsync("alert", "No vetoes remaining.");
                 return;
             case "Not Enough Characters":
                 await JsRuntime.InvokeVoidAsync("alert", "Using a veto now would not leave enough characters to generate a full team. You must accept all remaining characters");
@@ -76,9 +76,21 @@
         }
     }
 
-    private Task ModalReRollCharacter()
+    private async Task ModalReRollCharacter()
     {
         Console.WriteLine("ReRoll");
-        return OnClose.InvokeAsync(true);
+        string reRollResult = TeamGenerator.ReRollCharacter();
+        switch (reRollResult)
+        {
+            case "success":
+                await OnClose.InvokeAsync(true);
+                return;
+            case "No ReRolls":
+                await JsRuntime.InvokeVoidAsync("alert", "No rerolls remaining.");
+                return;
+            case "Not Enough Characters":
+                await JsRuntime.InvokeVoidAsync("alert", "Using a reroll now would not leave enough characters to generate a full team. You must accept all remaining characters");
+                return;
+        }
     }
 }

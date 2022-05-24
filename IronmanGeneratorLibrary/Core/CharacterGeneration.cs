@@ -7,33 +7,31 @@ using System.Threading.Tasks;
 namespace IronmanGeneratorLibrary.Core;
 public class CharacterGeneration
 {
-	public static string[] baseGameCharacterNames =
+	public static string[] CharacterNames =
 	{
 		"Mario", "Donkey Kong", "Link", "Samus", "Dark Samus", "Yoshi",
 		"Kirby", "Fox", "Pikachu", "Luigi", "Ness", "Captain Falcon",
-		"Jigglypuff", "Peach", "Daisy", "Bowser", "Ice Climbers", "Shiek",
-		"Zelda", "Dr. Mario", "Pichu", "Falco", "Marth", "Lucina",
-		"Young Link", "Ganondorf", "Mewtwo", "Roy", "Chrom", "Mr. Game & Watch",
+		"Jigglypuff", "Peach", "Daisy", "Bowser", "Ice Climbers", "Sheik",
+		"Zelda", "Dr Mario", "Pichu", "Falco", "Marth", "Lucina",
+		"Young Link", "Ganondorf", "Mewtwo", "Roy", "Chrom", "Mr Game & Watch",
 		"Meta Knight", "Pit", "Dark Pit", "Zero Suit Samus", "Wario",
 		"Snake", "Ike", "Pokemon Trainer", "Diddy Kong", "Lucas", "Sonic",
-		"King Dedede", "Olimar", "Lucario", "R.O.B", "Toon Link", "Wolf",
+		"King Dedede", "Olimar", "Lucario", "R O B", "Toon Link", "Wolf",
 		"Villager", "Mega Man", "Wii Fit Trainer", "Rosalina & Luma",
 		"Little Mac", "Greninja", "Mii Brawler", "Mii Swordfighter",
-		"Mii Gunner", "Palutena", "Pacman", "Robin", "Shulk", "Bowser Jr.",
+		"Mii Gunner", "Palutena", "Pacman", "Robin", "Shulk", "Bowser Jr",
 		"Duck Hunt", "Ryu", "Ken", "Cloud", "Corrin", "Bayonetta", "Inkling",
-		"Ridley", "Simon", "Richter", "King K. Rool", "Isabelle", "Incineroar"
+		"Ridley", "Simon", "Richter", "King K Rool", "Isabelle", "Incineroar",
+		"Piranha Plant", "Joker", "Hero", "Banjo & Kazooie", "Terry", "Byleth",
+		"Min Min", "Steve", "Sephiroth", "Pyra Mythra", "Kazuya", "Sora"
 	};
-
-	public static string[] DlcCharacterNames =
-	{
-		"Joker", "Hero", "Terry", "Steve"
-	};
+		
 
 	static Random rand = new Random();
 
 	public static string GetRandomCharacterName()
 	{
-		return baseGameCharacterNames[rand.Next(0, baseGameCharacterNames.Length)];
+		return CharacterNames[rand.Next(0, CharacterNames.Length)];
 	}
 
 }

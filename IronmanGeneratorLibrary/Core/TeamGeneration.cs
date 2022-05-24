@@ -34,22 +34,37 @@ public class TeamGeneration
         }
     }
 
-	public void ReRollCharacter()
+	public string ReRollCharacter()
     {
+        if (ReRolls <= 0)
+        {
+            return "No ReRolls";
+        }
+        if (charsLeftToGenerate == poolOfCharacters.Count)
+        {
+            return "Not Enough Characters";
+        }
+        else
+        {
+            ReRolls--;
 
+            RemoveCharacterFromPool(generatedCharacter);
+            return "success";
+        }
     }
 
     public void GenerateTeam(int numOfCharacters)
     {
         team = new();
+        charsLeftToGenerate = numOfCharacters;
     }
 
-    public void FillPool(bool DLC)
+    public void FillPool()
     {
         poolOfCharacters.Clear();
-        foreach (string c in CharacterGeneration.baseGameCharacterNames)
+        foreach (string c in CharacterGeneration.CharacterNames)
         {
-            poolOfCharacters.Add(new Character { CharacterName = c });
+            poolOfCharacters.Add(new Character { CharacterName = c, ImageFileName = "images/" + c + ".png" });
         }
         Console.WriteLine(poolOfCharacters.Count);
     }
