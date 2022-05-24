@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace IronmanGeneratorLibrary.Core;
 public class TeamGeneration
 {
-    public Team teamOne = new();
-    public Team teamTwo = new();
+    public Team team = new();
     public List<Character> poolOfCharacters = new();
     public Random rand = new();
+    public Character generatedCharacter = new();
 	public void AcceptCharacter()
     {
 
@@ -26,10 +26,9 @@ public class TeamGeneration
 
     }
 
-    public void GenerateTeams(int numOfCharacters)
+    public void GenerateTeam(int numOfCharacters)
     {
-        teamOne = new();
-        teamTwo = new();
+        team = new();
     }
 
     public void FillPool(bool DLC)
@@ -42,9 +41,19 @@ public class TeamGeneration
         Console.WriteLine(poolOfCharacters.Count);
     }
 
-    public string GetCharacterFromPool()
+    public Character GetCharacterFromPool()
     {
         
-        return poolOfCharacters[rand.Next(0, poolOfCharacters.Count)].CharacterName;
+        return poolOfCharacters[rand.Next(0, poolOfCharacters.Count)];
+    }
+
+    public void GenerateCharacter()
+    {
+        generatedCharacter = poolOfCharacters[rand.Next(0, poolOfCharacters.Count)];
+    }
+
+    public void RemoveCharacterFromPool(Character c)
+    {
+        poolOfCharacters.Remove(c);
     }
 }

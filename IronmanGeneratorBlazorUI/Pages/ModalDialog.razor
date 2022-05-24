@@ -7,7 +7,7 @@
                 <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
             </div>
             <div class="modal-body">
-                <p>@generatedCharacter.CharacterName</p>
+                <p>@TeamGenerator.generatedCharacter.CharacterName</p>
                 <img src="images/terry.png" alt="terry"/>
             </div>
             <div class="modal-footer">
@@ -25,10 +25,7 @@
     public string Title { get; set; }
 
     [Parameter]
-    public List<Character> Characters { get; set; }
-
-    [Parameter]
-    public Character generatedCharacter { get; set; }
+    public List<Character> Team { get; set; }
 
     [Parameter]
     public TeamGeneration TeamGenerator { get; set; }
@@ -51,8 +48,8 @@
     private Task ModalAcceptCharacter()
     {
         Console.WriteLine("Accepted");
-        Characters.Add(new Character(){CharacterName=generatedCharacter.CharacterName});
-        TeamGenerator.poolOfCharacters.Remove(TeamGenerator.poolOfCharacters.Where(o  => o.CharacterName == generatedCharacter.CharacterName).First());
+        Team.Add(TeamGenerator.generatedCharacter);
+        TeamGenerator.RemoveCharacterFromPool(TeamGenerator.generatedCharacter);
         return OnClose.InvokeAsync(true);
     }
 
